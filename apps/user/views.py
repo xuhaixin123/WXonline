@@ -62,14 +62,16 @@ class CustomBackend(ModelBackend):
 # 登录
 class LoginView(View):
     '''用户登录'''
-
     def get(self, request):
         login_form = LoginForm()
+
         return render(request, 'login.html', {'login_form': login_form})
 
     def post(self, request):
         # 实例化
         login_form = LoginForm(request.POST)
+        xnext = request.GET.get('next', "")
+        url = "http://127.0.0.1:8080/"+xnext
         if login_form.is_valid():
             # 获取用户提交的用户名和密码
             user_name = request.POST.get('username')
@@ -81,8 +83,11 @@ class LoginView(View):
             if user is not None and (catagory == '1' or catagory == '2'):
                 if user.is_active:
                     # 只有注册激活才能登录
-                    login(request, user)
-                    return HttpResponseRedirect(reverse('index'))
+                    if xnext == "":
+                        login(request, user)
+                        return HttpResponseRedirect(reverse('index'))
+                    else:
+                        return HttpResponseRedirect(url)
                 else:
                     return render(request, 'login.html', {'msg': '该用户尚未激活', 'login_form': login_form})
             elif user is None and catagory == '0':
