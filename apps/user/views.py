@@ -71,7 +71,7 @@ class LoginView(View):
         # 实例化
         login_form = LoginForm(request.POST)
         xnext = request.GET.get('next', "")
-        url = "http://127.0.0.1:8080/"+xnext
+        url = "http://127.0.0.1:8080"+xnext
         if login_form.is_valid():
             # 获取用户提交的用户名和密码
             user_name = request.POST.get('username')
